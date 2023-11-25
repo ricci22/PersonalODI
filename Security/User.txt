@@ -1,0 +1,5 @@
+BEGIN
+    APEX_UTIL.CREATE_USER(
+        p_user_name    => 'CHARTSUSER',
+        p_web_password => 'APEX1');
+END;
