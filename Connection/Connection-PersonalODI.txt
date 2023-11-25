@@ -1,0 +1,16 @@
+URL : https://g46a0cea3074e00-apexdbdev.adb.ap-melbourne-1.oraclecloudapps.com/
+
+TSC
+workspace : XODI
+username : [email@optima-data.com]
+passowrd : Welcome12345
+
+HCM
+workspace : HCM
+username : [email@optima-data.com]
+passowrd : Welcome12345
+
+CES
+workspace : CES
+username : [email@optima-data.com]
+passowrd : Welcome12345

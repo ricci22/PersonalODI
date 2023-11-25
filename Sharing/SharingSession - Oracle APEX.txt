@@ -1,0 +1,240 @@
+URL : https://g46a0cea3074e00-apexdbdev.adb.ap-melbourne-1.oraclecloudapps.com/
+
+TSC
+workspace : XODI
+username : [email@optima-data.com]
+passowrd : Welcome12345
+
+HCM
+workspace : HCM
+username : [email@optima-data.com]
+passowrd : Welcome12345
+
+CES
+workspace : CES
+username : [email@optima-data.com]
+passowrd : Welcome12345
+
+
+SQL Workshop > Object Browser
+
+SQL Workshop > SQL Commands
+	SQL Developer atau TOAD
+	untuk execute query, check data, develop function, package, dsb
+	
+			insert into xodi_andy_apex
+		(
+			item_code,
+			item_description,
+			uom_code,
+			item_type,
+			item_owner,
+			attribute1,
+			created_by,
+			last_updated_by,
+			creation_date,
+			last_update_date 
+		)
+		create table xodi_andy_apex
+		(
+			item_code varchar2(20),
+			item_description varchar2(100),
+			uom_code varchar2(10),
+			item_type varchar2(10),
+			item_owner varchar2(50),
+			attribute1 varchar2(100),
+			created_by number,
+			last_updated_by number,
+			creation_date date,
+			last_update_date date
+		);
+
+SQL Workshop > Object Browser	
+	Bisa otomatis dibuatkan REST API nya untuk table oleh ORDS
+	
+	Tab SQL untuk script, misal untuk backup
+	
+App Builder
+	Create an Application
+		From A File
+		
+		New Application
+		
+			Application Icon
+		
+			Feature
+			
+			Create Application
+			
+	Application mainly ada beberapa page
+		dari satu applikasi bisa ngelink antar page
+	
+	Run Application
+		minta login (credential nya sama dengan login APEX)
+		
+	Create Page
+		Disediakan template
+		
+		Component Classic Report / Interactive Report
+			Page Mode
+				Normal = Biasa
+				Modal Dialog = Pop Up
+			Include Form Page
+				Ada di create
+			Table
+				bisa di select
+				atau by query
+			Navigation
+			
+	Page Designer
+		Untuk Region bisa drag and drop
+	
+		Save, Run and Save Apps, (Buka tab baru untuk view application)	
+		
+		Bagian kanan terdapat properties dari objek di bagian kiri
+			Bisa Order by Item atau SQL Clause
+			Sequence, sequence objek di halaman
+			Column Properties, 
+				ada type misal plain text, link, dsb.
+				Heading 
+				Layout
+				Sequence, urutan kolom
+				
+	
+		Button
+			Text with icon
+			Terdapat template button di region
+				mesti dibuatkan button nya
+				
+		Create Page - Form - Create Data
+			Page Mode bisa di edit setelah create page
+			Primary Key - wajib ada satu field
+				tidak terikat dengan pk database
+				khusus untuk level item
+			Branch Here on Submit - setelah di submit bisa pindah ke halaman
+			Modal Dialog tidak bisa di preview langsung
+				Harus di tempelin ke suatu trigger yang munculin Modal Dialog page
+		
+		Page Designer - View Data
+			Button CreateTextIcon 
+				Action Redirect to Page within Application
+				Target Page 4
+			
+	
+		Validation
+		declare
+		l_count number;
+		begin
+
+		select count(1)
+		into l_count
+		from xodi_andy_apex
+		where 1=1
+		and item_code = :P4_ITEM_CODE;
+		
+		if l_count > 0 then
+		return 'Item Code '||:P4a_ITEM_CODE||' Already Exists';
+		end if;
+		end;
+		
+		Dynamic Action
+			Set Value
+			Affected Element
+			
+		List of Values
+			Type bisa SQL Query
+			
+		Update Column lewat PL SQL
+			misal CREATION_DATE
+			
+				begin
+
+				update hcm_nanda_apex
+				set created_by = '2000', creation_date = sysdate
+				where 1=1
+				and item_code = :P4_ITEM_CODE;
+
+				exception when others then
+				null;
+
+				end;
+				
+				
+	Mengganti Header di bagian BreadCrumb Entry
+		Edit Source > Edit Component > Short Name
+		
+	Create Page Edit Data
+		Form Table HCM_NANDA_APEX
+	
+		Pada page view data, piih column ganti type jadi Link
+			Link ke halaman Edit Data
+			Set Item PK Item_Code untuk fill existing data pada page Edit Data
+		
+		Column/PK pada edit data kalo di Settings > disabled tidak bisa update
+		
+REST API
+	create table hcm_rest_organization_nanda
+	(
+	organization_id number,
+	organization_code varchar2(100),
+	organization_name varchar2(100),
+	status varchar2(50),
+	master_organization_name varchar2(100)
+	)
+
+	PROCEDURE pilih type PL/SQL
+		hcm_nanda_rest_organization_prc (GET)
+		
+		status_code = apex_web_service.g_status_code;
+		
+		get data format CLOB
+		response dalam bentuk json
+		
+		function format SELECT element FROM JSON_TABLE
+		
+	Truncate bisa dari SQL Command bisa dari Object browser
+	
+	Create Button untuk jalani procedure
+		Behavior: Action > Define by Dynamic Action
+		
+		Dynamic Action
+		Biasanya trigger dikumpulin di satu tempat, untuk menjalankan event
+			True : Action Execute Server Side Code
+			
+		Secara visual tidak ada pemberitahuan karena execute di server side
+		
+		bisa execute javascript code
+			Create True Action (Dynamic Action > True)
+				Action Execute JavaScript Code
+				var spinner = apex.util.showSpinner();
+				
+				Execute Server Side Code
+				
+				Action Execute JavaScript Code				
+				$("#apex_wait_overlay").remove();
+				$(".u-Processing").remove();
+				
+				Refresh Region View Organization
+				
+		
+create or replace procedure hcm_nanda_truncate_org_prc
+begin
+truncate table HCM_REST_ORGANIZATION_NANDA;
+end;
+
+URL : https://g46a0cea3074e00-apexdbdev.adb.ap-melbourne-1.oraclecloudapps.com/
+
+TSC
+workspace : XODI
+username : [email@optima-data.com]
+passowrd : Welcome12345
+
+HCM
+workspace : HCM
+username : [email@optima-data.com]
+passowrd : Welcome12345
+
+CES
+workspace : CES
+username : [email@optima-data.com]
+passowrd : Welcome12345
