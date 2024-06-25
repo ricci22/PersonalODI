@@ -1,0 +1,103 @@
+create or replace PROCEDURE HCM_JOB_EMAIL_NOTIF_PRC (L_EMAIL_FROM VARCHAR2) IS
+	TYPE CURTYPE IS REF CURSOR;
+	SRC_CUR				    CURTYPE;
+	CURID       		    NUMBER;
+	DESCTAB     		    DBMS_SQL.DESC_TAB;
+	COLCNT      		    NUMBER;
+	NAMEVAR     		    VARCHAR2(32767);
+	NUMVAR      		    NUMBER;
+	DATEVAR     		    DATE;
+	EMAIL_FROM			    VARCHAR2(32767);
+	EMAIL_TO			    VARCHAR2(32767);
+	EMAIL_CC			    VARCHAR2(32767);
+	EMAIL_BCC			    VARCHAR2(32767);
+	EMAIL_SUBJECT		    VARCHAR2(32767);
+	EMAIL_BODY	     	    CLOB;
+    TMP_EMAIL_TO			VARCHAR2(32767);
+	TMP_EMAIL_CC		    VARCHAR2(32767);
+	TMP_EMAIL_BCC			VARCHAR2(32767);
+	TMP_EMAIL_SUBJECT	    VARCHAR2(32767);
+	TMP_EMAIL_BODY	        CLOB;
+	STMT_QUERY            	CLOB;
+    TEMP     		        VARCHAR2(32767);
+BEGIN
+	EMAIL_FROM := L_EMAIL_FROM;
+	
+	FOR J IN (
+        SELECT NTF.STMT_QUERY, TMPL.EMAIL_TO, TMPL.EMAIL_CC, TMPL.EMAIL_BCC, TMPL.EMAIL_SUBJECT, TMPL.EMAIL_BODY
+		FROM HCM_EMAIL_NOTIFICATION NTF, HCM_EMAIL_TEMPLATE TMPL
+		WHERE NTF.NOTIFICATION_TYPE = 'SCHEDULER' AND NTF.TEMPLATE_ID = TMPL.TEMPLATE_ID 
+		AND NTF.STATUS = 'A' AND TRUNC(SYSDATE) BETWEEN NTF.START_DATE AND NTF.END_DATE
+		AND TMPL.STATUS = 'A' AND TRUNC(SYSDATE) BETWEEN TMPL.START_DATE AND TMPL.END_DATE
+    )
+    LOOP 
+        EMAIL_TO	   := J.EMAIL_TO;
+        EMAIL_CC	   := J.EMAIL_CC;
+        EMAIL_BCC	   := J.EMAIL_BCC;
+		EMAIL_SUBJECT  := J.EMAIL_SUBJECT;
+		EMAIL_BODY	   := J.EMAIL_BODY;
+		STMT_QUERY 	   := J.STMT_QUERY;
+        
+        -- OPEN REF CURSOR VARIABLE:
+        OPEN SRC_CUR FOR STMT_QUERY;
+
+        -- SWITCH FROM NATIVE DYNAMIC SQL TO DBMS_SQL PACKAGE:
+        CURID := DBMS_SQL.TO_CURSOR_NUMBER(SRC_CUR);
+        DBMS_SQL.DESCRIBE_COLUMNS(CURID, COLCNT, DESCTAB);
+        
+        -- DEFINE COLUMNS:
+        FOR I IN 1 .. COLCNT LOOP
+            IF DESCTAB(I).COL_TYPE = 2 THEN
+                DBMS_SQL.DEFINE_COLUMN(CURID, I, NUMVAR);
+            ELSIF DESCTAB(I).COL_TYPE = 12 THEN
+                DBMS_SQL.DEFINE_COLUMN(CURID, I, DATEVAR);
+            ELSE
+                DBMS_SQL.DEFINE_COLUMN(CURID, I, NAMEVAR, 32767);
+            END IF;
+        END LOOP;
+        
+        -- FETCH ROWS WITH DBMS_SQL PACKAGE:
+        WHILE DBMS_SQL.FETCH_ROWS(CURID) > 0 LOOP
+            TMP_EMAIL_TO	   := EMAIL_TO;
+            TMP_EMAIL_CC	   := EMAIL_CC;
+            TMP_EMAIL_BCC	   := EMAIL_BCC;
+            TMP_EMAIL_SUBJECT  := EMAIL_SUBJECT;
+            TMP_EMAIL_BODY	   := EMAIL_BODY;
+
+            FOR I IN 1 .. COLCNT LOOP
+                TEMP := '';
+                IF (DESCTAB(I).COL_TYPE = 2) THEN
+                    DBMS_SQL.COLUMN_VALUE(CURID, I, NUMVAR);
+                    TEMP := NUMVAR;
+                ELSIF (DESCTAB(I).COL_TYPE = 12) THEN
+                    DBMS_SQL.COLUMN_VALUE(CURID, I, DATEVAR);
+                    TEMP := DATEVAR;
+                ELSE
+                    DBMS_SQL.COLUMN_VALUE(CURID, I, NAMEVAR);
+                    TEMP := NAMEVAR;
+                END IF;
+
+                TMP_EMAIL_TO      := REPLACE(TMP_EMAIL_TO, '#' || DESCTAB(I).COL_NAME || '#', TEMP);
+                TMP_EMAIL_CC      := REPLACE(TMP_EMAIL_CC, '#' || DESCTAB(I).COL_NAME || '#', TEMP);
+                TMP_EMAIL_BCC     := REPLACE(TMP_EMAIL_BCC, '#' || DESCTAB(I).COL_NAME || '#', TEMP);
+                TMP_EMAIL_SUBJECT := REPLACE(TMP_EMAIL_SUBJECT, '#' || DESCTAB(I).COL_NAME || '#', TEMP);
+                TMP_EMAIL_BODY    := REPLACE(TMP_EMAIL_BODY, '#' || DESCTAB(I).COL_NAME || '#', TEMP);
+            END LOOP;	
+
+            IF TMP_EMAIL_TO IS NOT NULL THEN
+                APEX_MAIL.SEND (
+                    P_FROM      => EMAIL_FROM, 
+                    P_TO        => TMP_EMAIL_TO,  
+                    P_CC        => TMP_EMAIL_CC,
+                    P_BCC       => TMP_EMAIL_BCC,
+                    P_BODY      => '',
+                    P_BODY_HTML => TO_CHAR(TMP_EMAIL_BODY),
+                    P_SUBJ      => TMP_EMAIL_SUBJECT );
+                APEX_MAIL.PUSH_QUEUE;
+            END IF;
+        END LOOP;
+
+        DBMS_SQL.CLOSE_CURSOR(CURID);
+    END LOOP;
+END;
+/

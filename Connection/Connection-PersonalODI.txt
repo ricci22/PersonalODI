@@ -14,3 +14,8 @@ CES
 workspace : CES
 username : [email@optima-data.com]
 passowrd : Welcome12345
+
+TRUV
+workspace : TRUV
+username  : nanda.nasution@optima-data.com
+password  : Welcome12345
