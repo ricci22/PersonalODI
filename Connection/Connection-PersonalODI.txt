@@ -19,3 +19,5 @@ TRUV
 workspace : TRUV
 username  : nanda.nasution@optima-data.com
 password  : Welcome12345
+
+Email From : noreply@optima-data.com

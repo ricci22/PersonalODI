@@ -31,8 +31,8 @@ v_content := v_content || ' <br>' ;
 v_content := v_content || ' <p>Regards, HCM</p>' ;
 
                 APEX_MAIL.SEND (
-                    P_FROM      => 'hradmin@lintasarta.co.id', 
-                    P_TO        => 'gradioni.sopacua@optima-data.com',  
+                    P_FROM      => 'noreply@optima-data.com', 
+                    P_TO        => 'nanda.nasution@optima-data.com',  
                     P_CC        => '',
                     P_BODY      => '',
                     P_BODY_HTML => v_content,
