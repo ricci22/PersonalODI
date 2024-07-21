@@ -77,7 +77,7 @@ create or replace package body "XODI_NOTIF_PKG" as
                         v_qry := v_qry || ', '''' AS PARAM' || to_char(prm_idx) || ', ';
                         v_qry := v_qry || ' '''' AS FIELDVALUE' || to_char(prm_idx) ;
                     END IF;
-                                                                             
+
                 END LOOP;
 
                 v_qry := v_qry || ' FROM ' || get_notif_hdr.view_name; 
@@ -129,20 +129,20 @@ create or replace package body "XODI_NOTIF_PKG" as
     BEGIN
         v_qry := 
                 'SELECT
-                   SYS_CONNECT_BY_PATH(name, '' -> '') "displayValue",
-                   tag "returnValue"
-                FROM
-                   hr_gb_custommenu START WITH id in (
-                      select
-                         id
-                      from
-                         HR_GB_CUSTOMMENU
-                      where 1=1
-                         and pid is null
-                   ) CONNECT BY PRIOR id = pid
-                ORDER BY
-                   "returnValue",
-                   "displayValue"';
+                        SYS_CONNECT_BY_PATH(name, '' -> '') "displayValue",
+                        tag "returnValue"
+                    FROM
+                        hr_gb_custommenu START WITH id in (
+                            select
+                                id
+                            from
+                                HR_GB_CUSTOMMENU
+                            where 1=1
+                                and pid is null
+                        ) CONNECT BY PRIOR id = pid
+                    ORDER BY
+                        "returnValue",
+                        "displayValue"';
 
         return v_qry;
 
