@@ -119,12 +119,14 @@ create or replace package body "XODI_NOTIF_PKG" as
         RETURN;
     END notif_detail;
 
-    --/* Function to return Query LoV to Get Menu Name as displayValue and PageId as returnValue
-    --* Because there can be different method of navigation
-    --* so for getting the page id need to be customized
-    --* in this case of custom navigation, get the page id from custom table
-    --*/
     FUNCTION get_lov_menuName RETURN CLOB IS
+        --/* Function to return Query LoV 
+        --* Create a function that returns a list of values (LoV) for querying menu names,
+        --* where the display value corresponds to the menu name, and the return value is the associated PageId.
+        --* Since there can be various methods of navigation, we need to customize the retrieval of the PageId,
+        --* especially in cases of custom navigation. To achieve this, obtain the PageId from a custom table.
+        --*/
+
         v_qry CLOB;
     BEGIN
         v_qry := 
