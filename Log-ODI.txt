@@ -1,0 +1,40 @@
+1. 20240723 PD 2024 Project 1. Notification
+#1 Pages
+    1. Page 400. TOOLS
+    2. Page 401. Notification Configuration
+    3. Page 402. Notification Configuration Form 402
+    4. Page 405. Notification Preview 403
+
+#2 Table
+    1. XODI_NOTIF
+    2. XODI_NOTIF_PARAM
+
+#3 Package
+    1. XODI_NOTIF_PKG
+
+2. 20240723 PD 2024 Project 2. Reminder
+#1 Pages
+    1. Page 400. TOOLS
+    2. Page 403. Reminder Configuration 404
+    3. Page 404. Reminder Configuration Form 405
+    4. Page 406. Reminder Preview 406
+
+#2. Table
+    1. XODI_REMIND
+    2. XODI_REMIND_CC
+    3. XODI_REMIND_PARAM
+    4. XODI_REMIND_RUNTIME
+
+#3. Package
+    1. XODI REMIND_PKG
+
+3. 20240723 PD 2024 Log Project
+    Navigasi :
+    Tools 
+        -> 401 Notification Configuration -> 402 Notification Configuration Form -> 403 Notification Preview 
+        -> 404 Reminder Configuration -> 405 Reminder Configuration Form -> 406 Reminder Preview
+
+    Saat deploy, hal yang perlu dilakukan
+        1. Melakukan entry pages pada target application disesuaikan dengan tipe navigation application tersebut.
+        2. 
+        
